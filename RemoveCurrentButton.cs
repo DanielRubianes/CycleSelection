@@ -30,11 +30,13 @@ namespace CycleSelection
                 if (Module1.CurrentFeature == null)
                     return;
                 (MapMember, long) currentFeature = Module1.CurrentFeature.Value;
-                MapView.Active.Map.SetSelection(SelectionSet.FromDictionary(
+                MapView activeMap = MapView.Active;
+                activeMap.Map.SetSelection(SelectionSet.FromDictionary(
                     new Dictionary<MapMember, List<long>>{
                         { currentFeature.Item1, new List<long>() {currentFeature.Item2} }
                     })
                 );
+                Module1.ZoomToSelected();
             });
         }
     }

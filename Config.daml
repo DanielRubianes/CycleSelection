@@ -20,7 +20,7 @@
       </tabs>
       <groups>
         <group id="CycleSelection_Group1" caption="Cycle Selection" appearsOnAddInTab="true">
-          <!-- host controls within groups -->
+           host controls within groups 
           <button refID="CycleSelection_StoreButton" size="large" />
           <button refID="CycleSelection_NextButton" size="middle" />
           <button refID="CycleSelection_RemoveCurrentButton" size="middle" />
@@ -47,5 +47,16 @@
         </button>
       </controls>
     </insertModule>
+	<updateModule refID="esri_mapping">
+		<groups>
+			<insertGroup id="CycleSelection_Group" caption="Cycle Selection">
+				<button refID="CycleSelection_StoreButton" size="large" />
+				<button refID="CycleSelection_NextButton" size="middle" />
+				<button refID="CycleSelection_RemoveCurrentButton" size="middle" />
+				<button refID="CycleSelection_ClearButton" size="middle" />
+				<button refID="CycleSelection_ReSelectButton" size="large" />
+			</insertGroup>
+		</groups>
+	</updateModule>
   </modules>
 </ArcGIS>

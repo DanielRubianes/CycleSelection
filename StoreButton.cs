@@ -34,6 +34,7 @@ namespace CycleSelection
 
                 Dictionary<MapMember, List<long>> selection = selectionSet.ToDictionary();
                 List<(MapMember, long)> selectionList = selection.SelectMany( kvp => kvp.Value.Select( oid => (kvp.Key, oid) ) ).ToList();
+            if (selectionList.Count > 0)
                 Module1.SelectedFeatures = selectionList;
             });
         }

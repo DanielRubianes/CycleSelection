@@ -35,7 +35,6 @@ namespace CycleSelection
         public static SelectionSet SelectionSet = null;
         public static List<(MapMember, long)> SelectedFeatures = null;
         public static (MapMember, long)? CurrentFeature = null;
-
         #endregion
 
         public static void NextFeature()
@@ -77,6 +76,16 @@ namespace CycleSelection
                 SelectedFeatures = null;
                 CurrentFeature = null;
             }
+        }
+
+        public static void ZoomToSelected()
+        {
+            MapView activeMap = MapView.Active;
+            if (activeMap.Map.SelectionCount == 0 || CurrentFeature == null) return;
+            activeMap.ZoomToSelected();
+            Camera mapCamera = activeMap.Camera;
+            mapCamera.Scale *= 1.5;
+            activeMap.ZoomTo(mapCamera, TimeSpan.Zero);
         }
 
         #region Overrides

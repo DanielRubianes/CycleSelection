@@ -31,12 +31,12 @@ namespace CycleSelection
                     return;
                 (MapMember, long) currentFeature = Module1.CurrentFeature.Value;
                 MapView activeMap = MapView.Active;
-                MapView.Active.Map.SetSelection(SelectionSet.FromDictionary(
+                activeMap.Map.SetSelection(SelectionSet.FromDictionary(
                     new Dictionary<MapMember, List<long>>{
                         { currentFeature.Item1, new List<long>() {currentFeature.Item2} }
                     })
                 );
-
+                Module1.ZoomToSelected();
             });
         }
     }
