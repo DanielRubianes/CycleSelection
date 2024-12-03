@@ -37,6 +37,14 @@ namespace CycleSelection
         public static (MapMember, long)? CurrentFeature = null;
         #endregion
 
+        public static void ClearFeatures()
+        {
+            SelectionSet = null;
+            SelectedFeatures = null;
+            CurrentFeature = null;
+            DeactivateState("CycleSelection_StoredSelection");
+        }
+
         public static void NextFeature()
         {
             if (SelectedFeatures == null)
@@ -47,13 +55,30 @@ namespace CycleSelection
             CurrentFeature = SelectedFeatures[currentIdx == -1 ? 0 : (currentIdx + 1) % SelectedFeatures.Count];
         }
 
-        public static void RemoveCurrentFeature()
+        public static void PreviousFeature()
         {
             if (SelectedFeatures == null)
                 return;
             if (CurrentFeature == null)
+                CurrentFeature = SelectedFeatures[0];
+            int currentIdx = SelectedFeatures.IndexOf(CurrentFeature.Value);
+            CurrentFeature = SelectedFeatures[currentIdx == 0 ? ^1 : (currentIdx - 1) % SelectedFeatures.Count];
+        }
+
+        public static void RemoveCurrentFeature()
+        {
+            if (SelectedFeatures == null)
                 return;
-            (MapMember, long) currentFeature = CurrentFeature.Value;
+            if (SelectedFeatures.Count < 2)
+            {
+                MapView.Active.Map.ClearSelection();
+                ClearFeatures();
+                return;
+            }
+            if (CurrentFeature == null)
+                return;
+
+            (MapMember, long) removeFeature = CurrentFeature.Value;
             int currentIdx = SelectedFeatures.IndexOf(CurrentFeature.Value);
 
             CurrentFeature = SelectedFeatures[currentIdx == -1 ? 0 : (currentIdx + 1) % SelectedFeatures.Count];
@@ -62,30 +87,36 @@ namespace CycleSelection
             Dictionary<MapMember, List<long> > selection = SelectionSet.ToDictionary();
 
             // Remove object id from corresponding list in SelectionSet dict
-            selection[currentFeature.Item1] = selection[currentFeature.Item1].Where(item => item != currentFeature.Item2).ToList();
+            selection[removeFeature.Item1] = selection[removeFeature.Item1].Where(item => item != removeFeature.Item2).ToList();
 
             // Remove map members with empty lists
             selection = selection.Where(kvp => kvp.Value.Any()).ToDictionary();
 
             SelectionSet = SelectionSet.FromDictionary(selection);
+        }
 
-            if (SelectedFeatures.Count == 0)
-            {
-                MapView.Active.Map.ClearSelection();
-                SelectionSet = null;
-                SelectedFeatures = null;
-                CurrentFeature = null;
-            }
+        public static Boolean SelectCurrentFeature()
+        {
+            if (CurrentFeature == null)
+                return false;
+            (MapMember, long) currentFeature = CurrentFeature.Value;
+            MapView activeMap = MapView.Active;
+            activeMap.Map.SetSelection(SelectionSet.FromDictionary(
+                new Dictionary<MapMember, List<long>>{
+                        { currentFeature.Item1, new List<long>() {currentFeature.Item2} }
+                })
+            );
+            return true;
         }
 
         public static void ZoomToSelected()
         {
-            MapView activeMap = MapView.Active;
-            if (activeMap.Map.SelectionCount == 0 || CurrentFeature == null) return;
-            activeMap.ZoomToSelected();
-            Camera mapCamera = activeMap.Camera;
+            if (MapView.Active.Map.SelectionCount == 0 || CurrentFeature == null)
+                return;
+            MapView.Active.ZoomToSelected();
+            Camera mapCamera = MapView.Active.Camera;
             mapCamera.Scale *= 1.5;
-            activeMap.ZoomTo(mapCamera, TimeSpan.Zero);
+            MapView.Active.ZoomTo(mapCamera, TimeSpan.Zero);
         }
 
         #region Overrides
@@ -95,12 +126,37 @@ namespace CycleSelection
         /// <returns>False to prevent Pro from closing, otherwise True</returns>
         protected override bool CanUnload()
         {
-            //TODO - add your business logic
-            //return false to ~cancel~ Application close
             return true;
         }
 
         #endregion Overrides
+
+        #region Toggle States
+        /// <summary>
+        /// Activate  the specified state. State is identified via
+        /// its name. Listen for state changes via the DAML <b>condition</b> attribute
+        /// </summary>
+        /// <param name="stateID"></param>
+        public static void ActivateState(string stateID)
+        {
+            if ( !(FrameworkApplication.State.Contains(stateID)) )
+            {
+                FrameworkApplication.State.Activate(stateID);
+            }
+        }
+        /// <summary>
+        /// Activate or Deactivate the specified state. State is identified via
+        /// its name. Listen for state changes via the DAML <b>condition</b> attribute
+        /// </summary>
+        /// <param name="stateID"></param>
+        public static void DeactivateState(string stateID)
+        {
+            if (FrameworkApplication.State.Contains(stateID))
+            {
+                FrameworkApplication.State.Deactivate(stateID);
+            }
+        }
+        #endregion Toggle State
 
     }
 }

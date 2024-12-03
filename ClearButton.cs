@@ -28,9 +28,8 @@ namespace CycleSelection
             {
                 if (Module1.SelectionSet != null)
                 {
-                    Module1.SelectionSet = null;
-                    Module1.SelectedFeatures = null;
-                    Module1.CurrentFeature = null;
+                    MapView.Active.Map.ClearSelection();
+                    Module1.ClearFeatures();
                 }
             });
         }

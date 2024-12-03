@@ -20,13 +20,13 @@ using System.Threading.Tasks;
 
 namespace CycleSelection
 {
-    internal class NextButton : Button
+    internal class PreviousButton : Button
     {
         protected override void OnClick()
         {
             QueuedTask.Run(() =>
             {
-                Module1.NextFeature();
+                Module1.PreviousFeature();
                 if (Module1.SelectCurrentFeature())
                     Module1.ZoomToSelected();
             });
