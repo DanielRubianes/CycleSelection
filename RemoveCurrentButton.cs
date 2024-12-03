@@ -27,16 +27,8 @@ namespace CycleSelection
             QueuedTask.Run(() =>
             {
                 Module1.RemoveCurrentFeature();
-                if (Module1.CurrentFeature == null)
-                    return;
-                (MapMember, long) currentFeature = Module1.CurrentFeature.Value;
-                MapView activeMap = MapView.Active;
-                activeMap.Map.SetSelection(SelectionSet.FromDictionary(
-                    new Dictionary<MapMember, List<long>>{
-                        { currentFeature.Item1, new List<long>() {currentFeature.Item2} }
-                    })
-                );
-                Module1.ZoomToSelected();
+                if (Module1.SelectCurrentFeature())
+                    Module1.ZoomToSelected();
             });
         }
     }

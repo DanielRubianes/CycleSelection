@@ -29,13 +29,17 @@ namespace CycleSelection
                 MapView activeMap = MapView.Active;
                 if (activeMap == null )
                     return;
-                SelectionSet selectionSet = activeMap.Map.GetSelection();
-                Module1.SelectionSet = selectionSet;
+                Module1.SelectionSet = activeMap.Map.GetSelection();
 
-                Dictionary<MapMember, List<long>> selection = selectionSet.ToDictionary();
+                Dictionary<MapMember, List<long>> selection = Module1.SelectionSet.ToDictionary();
                 List<(MapMember, long)> selectionList = selection.SelectMany( kvp => kvp.Value.Select( oid => (kvp.Key, oid) ) ).ToList();
-            if (selectionList.Count > 0)
-                Module1.SelectedFeatures = selectionList;
+                if (selectionList.Count > 0)
+                {
+                    Module1.SelectedFeatures = selectionList;
+                    Module1.ActivateState("CycleSelection_StoredSelection");
+                }
+                else
+                    Module1.ClearFeatures();
             });
         }
     }
