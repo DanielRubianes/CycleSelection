@@ -1,62 +1,59 @@
 ﻿<ArcGIS defaultAssembly="CycleSelection.dll" defaultNamespace="CycleSelection" xmlns="http://schemas.esri.com/DADF/Registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
-  <AddInInfo id="{5b92614e-5658-472f-b9ae-2814d1cd5f9f}" version="1.0" desktopVersion="3.3.52636" product="ArcGISPro">
-    <Name>CycleSelection</Name>
-    <Description>CycleSelection description</Description>
-    <Image>Images\AddinDesktop32.png</Image>
-    <Author>drubianes</Author>
-    <Company>Acme</Company>
-    <Date>11/26/2024 9:55:09 AM</Date>
-    <Subject>Framework</Subject>
-    <!-- Note subject can be one or more of these topics:
-                    Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
-  </AddInInfo>
+    <AddInInfo id="{5b92614e-5658-472f-b9ae-2814d1cd5f9f}" version="1.0" desktopVersion="3.3.52636" product="ArcGISPro">
+        <Name>Cycle Selection</Name>
+        <Description>Allows the user to store and cycle through a map selection, zooming the map view camera to each feature.</Description>
+        <Image>Images\AddinDesktop32.png</Image>
+        <Author>drubianes</Author>
+        <Company>Acme</Company>
+        <Date>11/26/2024 9:55:09 AM</Date>
+        <Subject>Framework</Subject>
+        <!-- Note subject can be one or more of these topics:
+                        Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
+    </AddInInfo>
+    <conditions>
+	    <insertCondition id="CycleSelection_StoredSelection" caption="Stored Selection">
+		    <state id="CycleSelection_StoredSelection" />
+	    </insertCondition>
+    </conditions>
   <modules>
-    <insertModule id="CycleSelection_Module" className="Module1" autoLoad="false" caption="Module1">
-      <!-- uncomment to have the control hosted on a separate tab-->
-      <tabs>
-        <!--<tab id="CycleSelection_Tab1" caption="New Tab">
-          <group refID="CycleSelection_Group1"/>
-        </tab>-->
-      </tabs>
-      <groups>
-        <group id="CycleSelection_Group1" caption="Cycle Selection" appearsOnAddInTab="true">
-           host controls within groups 
-          <button refID="CycleSelection_StoreButton" size="large" />
-          <button refID="CycleSelection_NextButton" size="middle" />
-          <button refID="CycleSelection_RemoveCurrentButton" size="middle" />
-          <button refID="CycleSelection_ClearButton" size="middle" />
-          <button refID="CycleSelection_ReSelectButton" size="large" />
-        </group>
-      </groups>
-      <controls>
-        <!-- add your controls here -->
-        <button id="CycleSelection_StoreButton" caption="Store Selection" className="StoreButton" loadOnClick="true" smallImage="OnlySelectableLayer16" largeImage="OnlySelectableLayer32">
-          <tooltip heading="Tooltip Heading">Store selected features to cycle through<disabledText /></tooltip>
-        </button>
-        <button id="CycleSelection_NextButton" caption="Zoom to Next" className="NextButton" loadOnClick="true" smallImage="SelectionZoomToSelected16" largeImage="SelectionZoomToSelected32">
-          <tooltip heading="Tooltip Heading">Zoom to the next feature stored<disabledText /></tooltip>
-        </button>
-        <button id="CycleSelection_RemoveCurrentButton" caption="Remove Current" className="RemoveCurrentButton" loadOnClick="true" smallImage="SelectionMethodRemove16" largeImage="SelectionMethodRemove32">
-          <tooltip heading="Tooltip Heading">Remove current feature and zoom to next<disabledText /></tooltip>
-        </button>
-        <button id="CycleSelection_ClearButton" caption="Reset" className="ClearButton" loadOnClick="true" smallImage="GenericDeleteBlack16" largeImage="GenericDeleteBlack32">
-          <tooltip heading="Tooltip Heading">Clear stored selection<disabledText /></tooltip>
-        </button>
-        <button id="CycleSelection_ReSelectButton" caption="Re-Select" className="ReSelectButton" loadOnClick="true" smallImage="GenericNewSparkleLarge16" largeImage="GenericNewSparkleLarge32">
-          <tooltip heading="Tooltip Heading">Select stored features<disabledText /></tooltip>
-        </button>
-      </controls>
-    </insertModule>
-	<updateModule refID="esri_mapping">
-		<groups>
-			<insertGroup id="CycleSelection_Group" caption="Cycle Selection">
-				<button refID="CycleSelection_StoreButton" size="large" />
+    <insertModule id="CycleSelection_Module" className="Module1" autoLoad="false" caption="Cycle Selection">
+        <groups>
+            <group id="CycleSelection_Group" caption="Cycle Selection" keytip="C">
+                <button refID="CycleSelection_StoreButton" size="large" />
+				<button refID="CycleSelection_PreviousButton" size="middle" />
 				<button refID="CycleSelection_NextButton" size="middle" />
 				<button refID="CycleSelection_RemoveCurrentButton" size="middle" />
+                <button refID="CycleSelection_ReSelectButton" size="middle" />
 				<button refID="CycleSelection_ClearButton" size="middle" />
-				<button refID="CycleSelection_ReSelectButton" size="large" />
-			</insertGroup>
-		</groups>
-	</updateModule>
+            </group>
+        </groups>
+        <controls>
+            <button id="CycleSelection_StoreButton" caption="Store Selection" className="StoreButton" loadOnClick="true" smallImage="OnlySelectableLayer16" largeImage="OnlySelectableLayer32" condition="esri_mapping_activeMapView_hasFeatureSelectionCondition" keytip="S">
+                <tooltip heading="Store Selection">Store selected features to cycle through</tooltip>
+            </button>
+		    <button id="CycleSelection_PreviousButton" caption="Zoom to Prev." className="PreviousButton" loadOnClick="true" smallImage="EditUndo_B_16" largeImage="EditUndo_B_32" condition="CycleSelection_StoredSelection" keytip="P">
+			    <tooltip heading="Zoom to Previous Feature">Select and zoom to previous feature stored</tooltip>
+		    </button>
+            <button id="CycleSelection_NextButton" caption="Zoom to Next" className="NextButton" loadOnClick="true" smallImage="SelectionZoomToSelected16" largeImage="SelectionZoomToSelected32" condition="CycleSelection_StoredSelection" keytip="N">
+                <tooltip heading="Zoom to Next Feature">Select and zoom to the next feature stored</tooltip>
+            </button>
+            <button id="CycleSelection_RemoveCurrentButton" caption="Remove Current" className="RemoveCurrentButton" loadOnClick="true" smallImage="SelectionMethodRemove16" largeImage="SelectionMethodRemove32" condition="CycleSelection_StoredSelection" keytip="R">
+                <tooltip heading="Remove Current">Remove current feature from stored selection and zoom to next</tooltip>
+            </button>
+            <button id="CycleSelection_ReSelectButton" caption="Re-Select" className="ReSelectButton" loadOnClick="true" smallImage="GenericNewSparkleLarge16" largeImage="GenericNewSparkleLarge32" condition="CycleSelection_StoredSelection" keytip="Q">
+                <tooltip heading="Re-Select Stored Features">Select  all stored features</tooltip>
+            </button>
+            <button id="CycleSelection_ClearButton" caption="Clear" className="ClearButton" loadOnClick="true" smallImage="GenericDeleteBlack16" largeImage="GenericDeleteBlack32" condition="CycleSelection_StoredSelection" keytip="C">
+                <tooltip heading="Clear Stored Selection">Clear selection and clear all stored features</tooltip>
+            </button>
+        </controls>
+    </insertModule>
+    <updateModule refID="esri_mapping">
+	    <tabs>
+		    <updateTab refID="esri_mapping_homeTab">
+			    <insertGroup refID="CycleSelection_Group" placeWith="esri_mapping_selectionGroup" insert="after"/>
+		    </updateTab>
+	    </tabs>
+    </updateModule>
   </modules>
 </ArcGIS>
