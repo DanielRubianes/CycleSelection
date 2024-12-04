@@ -3,7 +3,7 @@
         <Name>Cycle Selection</Name>
         <Description>Allows the user to store and cycle through a map selection, zooming the map view camera to each feature.</Description>
         <Image>Images\AddinDesktop32.png</Image>
-        <Author>drubianes</Author>
+        <Author>Daniel Rubianes</Author>
         <Company>Acme</Company>
         <Date>11/26/2024 9:55:09 AM</Date>
         <Subject>Framework</Subject>
